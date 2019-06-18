@@ -168,9 +168,34 @@ function getState(val) {
               
               
               </div>
-			    
+			  <form method="post" action="{{url('search_data')}}">
+			    <input type="hidden" class="form-control" name="_token" value="{{csrf_token()}}" required>
+			    <div class="row">
+				<div class="col-xl-5">	
+				<div class="form-group" >
+  <label for="usr">From Date:</label>
+  <input type="date" class="form-control" name="f_date"   required>
+
+</div>
+</div>
+<div class="col-xl-5">	
+				<div class="form-group" >
+  <label for="usr">To Date:</label>
+  <input type="date" class="form-control" name="t_date"    required>
+
+</div>
+</div>
+<div class="col-xl-1">	
+<br>
+  <input type="submit" name="submit" value="Search" class="btn btn-info"  required>
+</div>
+</div>
+</form>
      <div class="page_single layout_fullwidth_padding" ng-show = "Show">
-                <div class="contactform">
+	 @if($report =='search')
+	   <button id="pdf" class="btn btn-danger"  onclick="createPDF()">TO PDF</button>	
+   @endif
+                <div class="contactform" id="tab">
 				
 				<table class="table" id="example">
     <thead>
@@ -182,7 +207,9 @@ function getState(val) {
         <th>Amount </th>
         <th>Payment Type </th>
         <th>Total </th>
-        <th>Option</th>
+		 @if($report !='search')
+        <th id="hide">Option</th>
+		 @endif 
       </tr>
     </thead>
     <tbody>
@@ -213,8 +240,8 @@ function getState(val) {
 			 
 			 
 		</td>
-	 
-        <td>
+		 @if($report !='search') 
+        <td id="hide">
 		<div class="dropdown">
   <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">Option
   <span class="caret"></span></button>
@@ -226,11 +253,12 @@ function getState(val) {
 </div>
 	
 		</td>
+		 @endif  
       </tr>
       @endfor   
     </tbody>
   </table>
-				</div>
+			</div>
 				</div>
       
       </div>
@@ -329,12 +357,34 @@ function getState(val) {
       <div class="close_popup_button"><a href="#" class="close-popup"><img src="images/icons/black/menu_close.png" alt="" title="" /></a></div>
     </div>
     </div>
-   <script type="text/javascript" src="https://cdn.datatables.net/1.10.8/js/jquery.dataTables.min.js"></script>
-	<script>
-	$(document).ready(function() {
-    $('#example').DataTable();
-} );
-	</script>
+  
+<script>
+    function createPDF() {
+        var sTable = document.getElementById('tab').innerHTML;
+
+
+        var style = "<style>";
+        style = style + "table {width: 100%;font: 17px Calibri;}";
+        style = style + "table, th, td {border: solid 1px #DDD; border-collapse: collapse;";
+        style = style + "padding: 2px 3px;text-align: center;}";
+        style = style + "</style>";
+
+        // CREATE A WINDOW OBJECT.
+        var win = window.open('', '', 'height=700,width=700');
+
+        win.document.write('<html><head>');
+        win.document.write('<title>Monthly Report</title>');   // <title> FOR PDF HEADER.
+        win.document.write(style);          // ADD STYLE INSIDE THE HEAD TAG.
+        win.document.write('</head>');
+        win.document.write('<body>');
+        win.document.write(sTable);         // THE TABLE CONTENTS INSIDE THE BODY TAG.
+        win.document.write('</body></html>');
+
+        win.document.close(); 	// CLOSE THE CURRENT WINDOW.
+
+        win.print();    // PRINT THE CONTENTS.
+    }
+</script>
    
 @include('include/script')
   </body>

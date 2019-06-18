@@ -59,3 +59,6 @@ Route::post('add_subledger','teachercontroller@add_subledger');
 Route::get('create_entry','teachercontroller@create_entry');
 Route::get('getsubledger/{id}','teachercontroller@getsubledger');
 Route::post('add_bookentry','teachercontroller@add_bookentry');
+Route::post('search_data','teachercontroller@search_data');
+Route::get('getbookfee/{id}','teachercontroller@getbookfee');
+

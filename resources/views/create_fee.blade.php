@@ -100,13 +100,32 @@ $('.student_edit').each(function(){
 	
      <div id="pages_maincontent">
   
-              <h2 class="page_title">Fee Category   </h2> 
+              <h2 class="page_title">Material Category   </h2> 
        <a href="#" ng-click="ShowHide()"> <button type="button" class="btn btn-default" style="margin-left: 5%;">Add New</button></a>
      <div class="page_single layout_fullwidth_padding" ng-show = "IsVisible">
 
                 <div class="contactform">
                 <form class="" name="empForm" method="post" action="{{url('set_fee')}}" enctype="multipart/form-data">
 				<input type="hidden" name="_token" value="{{csrf_token()}}">
+				<div class="form-group" >
+  <label for="usr">Course :</label>
+   <select class="form-control" id="sel1" name="e_class"  ng-model="e_class"  onChange="getState(this.value);" required>
+    @for($i=0;$i<count($class);$i++)
+        <option value="{{$class[$i]->c_id}}">{{$class[$i]->classes}}</option>
+@endfor  
+      </select>
+
+
+</div>
+<div class="form-group" >
+  <label for="usr">Sub Category:</label>
+    <select class="form-control" id="state-list" name="section"  ng-model="section" onChange="getlevel(this.value);" required>
+	{{--	@for($i=0;$i<count($teacher);$i++)
+        <option value="{{$teacher[$i]->sec_id}}">{{$teacher[$i]->sec_name}}</option>
+@endfor --}}
+      </select>
+
+</div>
 					<div class="form-group" >
   <label for="usr">Name:</label>
   <input type="text" class="form-control" name="met_name"  ng-model="met_name"  required>
@@ -165,7 +184,7 @@ $('.student_edit').each(function(){
     <tbody>
 	 @for($i=0;$i<count($sql);$i++)
       <tr>
-       
+       <td>{{$i+1}}</td>
         <td>{{$sql[$i]->met_name}}</td>
 		    <td>{{$sql[$i]->met_dis}}</td>
         <td><img src="{{$sql[$i]->met_image}}" width="200" height="100"></td>

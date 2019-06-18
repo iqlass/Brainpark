@@ -172,13 +172,14 @@ $('.student_edit').each(function(){
   <input type="text" class="form-control" name="sub_cat"  ng-model="sub_cat"  ng-value='"{{$sql[0]->sub_category}}"' required>
 
 </div>
-<div class="form-group" >
+<!--<div class="form-group" >
   <label for="usr">Level :</label>
   <input type="text" class="form-control" name="level"  ng-model="level"    ng-value='"{{$sql[0]->level}}"'  required>
 
-</div>
+</div> -->
 <div class="form-group" >
   <label for="usr">price :</label>
+     <input type="hidden" class="form-control" name="level"  ng-model="level"  value=" ">
   <input type="number" class="form-control" name="price"  ng-model="price"   ng-value='"{{$sql[0]->price}}"'  required>
 
 </div>

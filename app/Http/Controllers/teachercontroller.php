@@ -41,6 +41,8 @@ class teachercontroller extends Controller
 		 Session::put('user_data',$sql); 
 		   return Redirect::to('/');
 	  }else{
+		  
+		 
 		  $data = array('status'=>'error','msg'=>'Invalid User Name and Password');
 		   Session::put('user_data',$data); 
 		   return Redirect::to('/emp_login'); 
@@ -220,7 +222,7 @@ $str = $emp_id[0]->id;
                      ->groupBy('classes')
                      ->get();
 	    $batch= DB::select('select * from tbl_section where is_active ="1"');
-	    $student= DB::select('select * from tbl_student as s,tbl_class as c,tbl_section as b where s.level = c.c_id and s.batch = b.sec_id and s.is_active ="1"');
+	    $student= DB::select('select * from tbl_student as s,tbl_class as c,tbl_section as b,tbl_branch as br where s.level = c.c_id and s.batch = b.sec_id and s.branch_id = br.branch_id and  s.is_active ="1"');
 	   // $student= DB::select('select * from tbl_student as s,tbl_class as c,tbl_section as l,tbl_users as u where s.coruse =c.c_id and s.level = l.sec_id and l.staff_id = u.emp_id and s.is_active ="1"');
 	   $roll_no = DB::select("select max(`stu_id`) as reg_no from tbl_student where `is_active` ='1'");
 	    
@@ -230,13 +232,15 @@ $str = $emp_id[0]->id;
 	   else{
 		  $data =  1;
 	   }
-	   
-	   return view('student',compact('data','sql','batch','student'));
+	    $branch= DB::select('select * from tbl_branch where is_active ="1"');
+	   return view('student',compact('data','sql','batch','student','branch'));
 	   // return view();
    }
    public function create_fee(){
 	  $sql = DB::select("select * from tbl_metirial where is_active = '1'");
-	  return view('create_fee',compact('sql'));
+	  $class = DB::select("select * from tbl_class where is_active = '1' group by classes");
+	 
+	  return view('create_fee',compact('sql','class'));
    }
    public function del_sec($id){
 	   
@@ -289,7 +293,9 @@ if ($err) {
 	    'coruse'=>$request['e_class'],
 	    'level'=>$request['section'],
 	    'batch'=>$request['batch'],
+	    'branch_id'=>$request['branch'],
 	    'price'=>$request['price'],
+	    'book_fee'=>$request['book_fee'],
 	    'paytype'=>$request['paytype'],
 	    'paymode'=>$request['paymode'],
 		   'response'=>$response,
@@ -343,7 +349,9 @@ if ($err) {
 	    'coruse'=>$request['e_class'],
 	    'level'=>$request['section'],
 	    'batch'=>$request['batch'],
+		'branch_id'=>$request['branch'],
 	    'price'=>$payment,
+		'book_fee'=>$request['book_fee'],
 	    'paytype'=>$request['paytype'],
 	    'paymode'=>$request['paymode'],
 		   'response'=>$response,
@@ -394,13 +402,16 @@ if ($err) {
 	    'coruse'=>$request['e_class'],
 	    'level'=>$request['section'],
 	    'batch'=>$request['batch'],
+		'branch_id'=>$request['branch'],
 	    'price'=>$payment,
+		'book_fee'=>$request['book_fee'],
 	    'paytype'=>$request['paytype'],
 	    'response'=>$response,
 	    'paymode'=>$request['paymode'],
 	    'is_active'=>1,
 		
 		]);
+
 		$data = array('status'=>'success','msg'=>'Insert Successfully');
 		Session::put('status',$data);
 		return Redirect::to('/studentcration'); 
@@ -474,20 +485,22 @@ $data = DB::table('tbl_class')
 	
    }
       public function getsection($id){
+		  $sql = DB::select("select price from tbl_class where c_id = '".$id."' ");
+	echo $sql[0]->price;
 	 
-	$sql = DB::select("select sub_category from tbl_class where c_id = '".$id."' ");
-$data = DB::table('tbl_class')
-                     ->where('sub_category', '=',$sql[0]->sub_category)
-                     ->groupBy('level')
-                     ->get();
-	 if(count($data) > 0){
-		 for($i=0;$i<count($data);$i++){
-			echo  '<option value="'.$data[$i]->c_id.'">'.$data[$i]->level.'</option>';
+	// $sql = DB::select("select sub_category from tbl_class where c_id = '".$id."' ");
+// $data = DB::table('tbl_class')
+                     // ->where('sub_category', '=',$sql[0]->sub_category)
+                     // ->groupBy('level')
+                     // ->get();
+	 // if(count($data) > 0){
+		 // for($i=0;$i<count($data);$i++){
+			// echo  '<option value="'.$data[$i]->c_id.'">'.$data[$i]->level.'</option>';
 			
-		 }
-	 }else{
-		echo  '<option > ----</option>'; 
-	 }
+		 // }
+	 // }else{
+		// echo  '<option > ----</option>'; 
+	 // }
 	
    }
      public function getprice($id){
@@ -650,6 +663,7 @@ public function set_fee(Request $request){
 				 $image->move(public_path().'/teachers_image/', $name);
 				//$image->save(); 
 	tbl_metirial::create([
+	'level_id' =>$request['section'],
 	'met_name' =>$request['met_name'],
 	'met_dis' =>$request['met_des'],
 	'met_price' =>$request['price'],
@@ -806,7 +820,8 @@ public function create_entry(){
 	$sql = DB::select("select * from tbl_ledger where is_active='1'");
 	$amount = DB::select("SELECT * FROM tbl_dailybookentry as b,tbl_subledger as s,tbl_ledger as l where b.subledger_id = s.subledger_id and s.ledger_id = l.ledger_id and  b.is_active='1' order by b.date");
 	$total = 0;
-	return view('create_daily_book',compact('sql','amount','total'));
+	$report = 'data';
+	return view('create_daily_book',compact('sql','amount','total','report'));
 }
 public function getsubledger($id){
 	
@@ -834,6 +849,20 @@ public function add_bookentry(Request $request){
 	$data = array('status'=>'success','msg'=>'Insert Successfully');
 	   Session::put('status',$data);
 	   return Redirect::to('/create_entry');
+}
+public function search_data(Request $request){
+	
+	$sql = DB::select("select * from tbl_ledger where is_active='1'");
+	//$amount = DB::select("SELECT * FROM tbl_dailybookentry as b,tbl_subledger as s,tbl_ledger as l where b.subledger_id = s.subledger_id and s.ledger_id = l.ledger_id and  b.is_active='1' and b.date <='".$request['f_date']."' and b.date >='".$request['t_date']."' order by b.date");
+	$amount = DB::select("SELECT * FROM tbl_dailybookentry as b,tbl_subledger as s,tbl_ledger as l where b.subledger_id = s.subledger_id and s.ledger_id = l.ledger_id and  b.is_active='1' and b.`date` >='".$request['f_date']."' and b.`date` <='".$request['t_date']."'   order by b.date");
+	$total = 0;
+	$report = 'search';
+	return view('create_daily_book',compact('sql','amount','total','report'));
+}
+public function getbookfee($id){
+	
+	$sql = DB::select("select sum(met_price) as total  from  tbl_metirial  where level_id='".$id."'");
+	echo  $sql[0]->total;
 }
 
 }

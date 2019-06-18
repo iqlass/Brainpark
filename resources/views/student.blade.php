@@ -59,7 +59,19 @@ function getprice(val) {
 	success: function(data){
 		console.log(data);
 		$("#price").val(data);
-		//getCity();
+		getbookfee(val);
+	}
+	});
+}
+function getbookfee(val){
+	$.ajax({
+	type: "GET",
+	url: "getbookfee/"+val,
+	//data:'country_id='+val,
+	success: function(data){
+		console.log(data);
+		$("#book_fee").val(data);
+		
 	}
 	});
 }
@@ -235,15 +247,16 @@ $('.student_edit').each(function(){
       </select>
 
 </div>
-	<div class="form-group" >
+	<!--<div class="form-group" >
   <label for="usr">Level:</label>
     <select class="form-control" id="select_level" name="level"  ng-model="level" onChange="getprice(this.value);"  required>
 	
       </select>
 
-</div>
+</div> -->
 	<div class="form-group" >
   <label for="usr">Batch:</label>
+    <input type="hidden" class="form-control" name="level"  ng-model="level"  value=" ">
     <select class="form-control" id="state-list" name="batch"  ng-model="batch" required>
 		@for($i=0;$i<count($batch);$i++)
         <option value="{{$batch[$i]->sec_id}}">{{$batch[$i]->sec_name}}</option>
@@ -252,8 +265,21 @@ $('.student_edit').each(function(){
 
 </div>
 <div class="form-group" >
-  <label for="usr">Price :</label>
+  <label for="usr">Branch:</label>
+    <select class="form-control"  name="branch"  ng-model="branch"  required>
+	@for($i=0;$i<count($branch);$i++)
+        <option value="{{$branch[$i]->branch_id}}">{{$branch[$i]->branch_name}}</option>
+@endfor
+      </select>
+
+</div>
+<div class="form-group" >
+  <label for="usr">Tuition Fee :</label>
   <input type="number" class="form-control" name="price"   id="price" readonly  required>
+</div>
+<div class="form-group" >
+  <label for="usr">Book Fee :</label>
+  <input type="number" class="form-control" name="book_fee"   id="book_fee" readonly  required>
 </div>
 <div class="form-group" >
   <label><input type="radio" name="paytype" value="1" >One Month </label>
@@ -294,6 +320,7 @@ $('.student_edit').each(function(){
         <th>Class</th>
         <th>Level </th>
         <th>Batch </th>
+        <th>Branch </th>
         <th>Payment Mode </th>
         <th>Fee  </th>
         <th>Fee Type  </th>
@@ -319,8 +346,9 @@ $('.student_edit').each(function(){
         <td>{{$student[$i]->reg_no}}</td>
 		    <td>{{$student[$i]->stu_name}}</td>
         <td>{{$student[$i]->classes}}</td>
-        <td>{{$student[$i]->sub_category}} / {{$student[$i]->level}}</td>
+        <td>{{$student[$i]->sub_category}} </td>
         <td>{{$student[$i]->sec_name}}</td>
+        <td>{{$student[$i]->branch_name}}</td>
         <td>
 		@if($student[$i]->paymode == '1')
 			<p>Cash </p>

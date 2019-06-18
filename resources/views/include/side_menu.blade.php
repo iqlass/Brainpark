@@ -54,9 +54,20 @@
                 <div class="user_thumb">
                 <img src="images/background.png" alt="" title="" />
                   <div class="user_details">
-                   <p>Welcome, <span>IQLASS</span></p>
+				    @if($user = Session::get('user_data'))
+						
+                   <p>Welcome, <span>{{$user[0]->emp_name}}</span></p>
                   </div>  
-                  <div class="user_avatar"><img src="images/avatar.jpg" alt="" title="" /></div>       
+				  @if($user[0]->emp_photo =='')
+					   <div class="user_avatar"><img src="images/avatar.jpg" alt="" title="" /></div> 
+					  @else
+						   <div class="user_avatar"><img src="{{$user[0]->emp_photo}}" alt="" title="" /></div> 
+						  @endif
+                       @else
+							<script>
+   window.location.href = "emp_login";
+   </script>
+						@endif
                 </div>
 				
                   <nav class="user-nav" style="background-color: #e35002;">

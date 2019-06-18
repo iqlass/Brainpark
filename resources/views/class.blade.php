@@ -113,13 +113,15 @@ input[type=number]::-webkit-outer-spin-button {
   <input type="text" class="form-control" name="sub_cat"  ng-model="sub_cat"  required>
 
 </div>
-<div class="form-group" >
+<!--<div class="form-group" >
   <label for="usr">Level :</label>
   <input type="text" class="form-control" name="level"  ng-model="level"  required>
 
-</div>
+</div>  -->
 <div class="form-group" >
   <label for="usr">price :</label>
+   <input type="hidden" class="form-control" name="level"  ng-model="level"  value=" ">
+
   <input type="number" class="form-control" name="price"  ng-model="price"  required>
 
 </div>
@@ -150,7 +152,7 @@ input[type=number]::-webkit-outer-spin-button {
         <th>Sno</th>
         <th>Class</th>
         <th>Sub category</th>
-        <th>Level </th>
+        
         <th>Price </th>
         <th>Action</th>
         
@@ -162,7 +164,7 @@ input[type=number]::-webkit-outer-spin-button {
         <td>{{$i +1}}</td>
         <td>{{$sql[$i]->classes}}</td>
         <td>{{$sql[$i]->sub_category}}</td>
-        <td>{{$sql[$i]->level}}</td>
+       
         <td>{{$sql[$i]->price}}</td>
 	 
         <td>

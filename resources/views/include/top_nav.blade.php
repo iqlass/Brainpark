@@ -1,3 +1,13 @@
+   @if($user = Session::get('user_data'))
+	   @else
+		  <script>
+   window.location.href = "emp_login";
+   </script>  
+	   @endif
+  
+  
+   
+   
    <div class="navbarpages">
                             <div class="navbar_left">
                                 <div class="logo_text">
